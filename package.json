@@ -1,0 +1,25 @@
+{
+  "name": "puhlue_backend",
+  "version": "1.0.0",
+  "description": "backend of phonebook demo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": " https://github.com/kaukahiiri/fullstack-22/osa3.git"
+  },
+  "author": "ari mäkinen",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
