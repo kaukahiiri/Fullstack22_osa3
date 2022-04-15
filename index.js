@@ -53,7 +53,7 @@ app.get("/info", (req, res) => {
 app.get("/api/persons", (req, res) => {
   Contact.find({}).then((result) => {
     console.log("db reading ready", result);
-    mongoose.connection.close();
+    // mongoose.connection.close();
     res.json(result);
   });
 });
@@ -108,11 +108,9 @@ app.post("/api/persons", (request, response) => {
 
   contact.save().then((result) => {
     console.log(`added ${contact.name} number ${contact.number} to phonebook`);
-    mongoose.connection.close();
+    response.json(contact);
   });
   contacts = contacts.concat(contact);
-
-  response.json(contact);
 });
 
 const PORT = process.env.PORT;
