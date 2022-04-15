@@ -51,11 +51,11 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons", (req, res) => {
-  Contact.find({}).then((result) => {
+  Contact.find({}).then((res) => {
     console.log("db read ready");
     mongoose.connection.close();
   });
-  res.json(result);
+  res.json(res);
 });
 
 app.get("/api/persons/:id", (request, response) => {
