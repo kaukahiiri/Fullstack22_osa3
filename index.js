@@ -100,12 +100,16 @@ app.post("/api/persons", (request, response) => {
       error: "name must be unique",
     });
   }
-  const contact = {
+
+  const contact = new Contact({
     name: body.name,
     number: body.number,
-    id: generateId(),
-  };
+  });
 
+  contact.save().then((result) => {
+    console.log(`added ${contact.name} number ${contact.number} to phonebook`);
+    mongoose.connection.close();
+  });
   contacts = contacts.concat(contact);
 
   response.json(contact);
