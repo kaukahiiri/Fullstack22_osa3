@@ -50,24 +50,21 @@ app.get("/info", (req, res) => {
   res.end(`Phonebook has ${contacts.length} contacts \n ${date}`);
 });
 
-app.get("/api/persons", (req, res) => {
-  Contact.find({}).then((result) => {
-    console.log("db reading ready", result);
-    // mongoose.connection.close();
-    res.json(result);
-  });
+app.get("/api/persons", (req, res, next) => {
+  Contact.find({})
+    .then((result) => {
+      console.log("db reading ready", result);
+      res.json(result);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const contact = contacts.find((c) => {
-    return c.id === id;
-  });
-  if (contact) {
-    response.json(contact);
-  } else {
-    response.status(404).end();
-  }
+app.get("/api/persons/:id", (request, response, next) => {
+  Contact.findById(request.params.id)
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
@@ -79,11 +76,6 @@ app.delete("/api/persons/:id", (request, response, next) => {
 
   //contacts = contacts.filter((c) => c.id !== id);
 });
-
-/// Generate id for a new note
-const generateId = () => {
-  return Math.floor(Math.random() * 10000000);
-};
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
@@ -139,6 +131,9 @@ const errorHandler = (error, request, response, next) => {
 // tämä tulee kaikkien muiden middlewarejen rekisteröinnin jälkeen!
 app.use(errorHandler);
 
+//////////////////
+/// LISTENING PORT
+//////////////////
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
