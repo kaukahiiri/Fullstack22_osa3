@@ -48,9 +48,12 @@ app.get("/", (req, res) => {
 //////////////////
 app.get("/info", (req, res) => {
   const date = new Date();
-  console.log(contacts.length);
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end(`Phonebook has ${contacts.length} contacts \n ${date}`);
+  Contact.countDocuments({}, function (err, count) {
+    console.log("Number of contacts: ", count);
+
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end(`Phonebook has ${count} contacts \n ${date}`);
+  });
 });
 
 //////////////////
