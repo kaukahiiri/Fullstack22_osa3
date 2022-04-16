@@ -43,6 +43,9 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello World!</h1>");
 });
 
+//////////////////
+/// RETURN BASIC INFO
+//////////////////
 app.get("/info", (req, res) => {
   const date = new Date();
   console.log(contacts.length);
@@ -50,6 +53,9 @@ app.get("/info", (req, res) => {
   res.end(`Phonebook has ${contacts.length} contacts \n ${date}`);
 });
 
+//////////////////
+/// RETURN ALL CONTACTS
+//////////////////
 app.get("/api/persons", (req, res, next) => {
   Contact.find({})
     .then((result) => {
@@ -59,6 +65,9 @@ app.get("/api/persons", (req, res, next) => {
     .catch((error) => next(error));
 });
 
+//////////////////
+/// RETURN SINGLE CONTACT
+//////////////////
 app.get("/api/persons/:id", (request, response, next) => {
   Contact.findById(request.params.id)
     .then((result) => {
@@ -67,6 +76,9 @@ app.get("/api/persons/:id", (request, response, next) => {
     .catch((error) => next(error));
 });
 
+//////////////////
+/// DELETE CONTACT
+//////////////////
 app.delete("/api/persons/:id", (request, response, next) => {
   Contact.findByIdAndRemove(request.params.id)
     .then((result) => {
@@ -77,10 +89,29 @@ app.delete("/api/persons/:id", (request, response, next) => {
   //contacts = contacts.filter((c) => c.id !== id);
 });
 
+//////////////////
+/// UPDATE CONTACT DATA
+//////////////////
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+
+  const contact = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Contact.findByIdAndUpdate(request.params.id, contact, { new: true })
+    .then((updatedContact) => {
+      response.json(updatedContact);
+    })
+    .catch((error) => next(error));
+});
+
+//////////////////
+/// ADD NEW CONTACT
+//////////////////
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  console.log(body);
-  console.log(body.number);
 
   if (!body.name || !body.number) {
     return response.status(400).json({
