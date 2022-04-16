@@ -70,11 +70,14 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  contacts = contacts.filter((c) => c.id !== id);
+app.delete("/api/persons/:id", (request, response, next) => {
+  Number.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 
-  response.status(204).end();
+  //contacts = contacts.filter((c) => c.id !== id);
 });
 
 /// Generate id for a new note
@@ -112,6 +115,29 @@ app.post("/api/persons", (request, response) => {
   });
   contacts = contacts.concat(contact);
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+// olemattomien osoitteiden käsittely
+app.use(unknownEndpoint);
+
+//////////////////
+/// ERROR HANDLER
+//////////////////
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+// tämä tulee kaikkien muiden middlewarejen rekisteröinnin jälkeen!
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
