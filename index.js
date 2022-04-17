@@ -113,7 +113,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 //////////////////
 /// ADD NEW CONTACT
 //////////////////
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   if (!body.name || !body.number) {
@@ -122,24 +122,20 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  const unique = contacts.find((c) => c.name === body.name);
-  console.log(unique);
-  if (unique) {
-    return response.status(400).json({
-      error: "name must be unique",
-    });
-  }
-
   const contact = new Contact({
     name: body.name,
     number: body.number,
   });
 
-  contact.save().then((result) => {
-    console.log(`added ${contact.name} number ${contact.number} to phonebook`);
-    response.json(contact);
-  });
-  contacts = contacts.concat(contact);
+  contact
+    .save()
+    .then((result) => {
+      console.log(
+        `added ${contact.name} number ${contact.number} to phonebook`
+      );
+      response.json(contact);
+    })
+    .catch((error) => next(error));
 });
 
 const unknownEndpoint = (request, response) => {
@@ -157,6 +153,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
