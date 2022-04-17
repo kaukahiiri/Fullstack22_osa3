@@ -4,7 +4,6 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
-const mongoose = require("mongoose");
 
 const Contact = require("./models/contact");
 
@@ -13,28 +12,7 @@ app.use(express.static("build"));
 app.use(express.json());
 app.use(morgan("tiny"));
 
-let contacts = [
-  {
-    name: "Arto Hellas",
-    number: "040-123456",
-    id: 1,
-  },
-  {
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-    id: 2,
-  },
-  {
-    name: "Dan Abramov",
-    number: "12-43-234345",
-    id: 3,
-  },
-  {
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-    id: 4,
-  },
-];
+
 ////////////////////
 ///  ROUTES      ///
 ////////////////////
@@ -84,7 +62,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 //////////////////
 app.delete("/api/persons/:id", (request, response, next) => {
   Contact.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
@@ -129,7 +107,7 @@ app.post("/api/persons", (request, response, next) => {
 
   contact
     .save()
-    .then((result) => {
+    .then(() => {
       console.log(
         `added ${contact.name} number ${contact.number} to phonebook`
       );
